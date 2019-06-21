@@ -7,7 +7,7 @@ from db import Review, session, fill
 
 
 @route("/")
-def initial():
+def start():
     redirect("/reviews")
 
 
