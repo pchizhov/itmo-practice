@@ -55,8 +55,8 @@ def new_restaurant():
     return """<form action="/new_restaurant" method="post">
             Insert the TripAdvisor restaurant url: <input name="url" type="text" />
             <input value="Go!" type="submit" />
-        </form>
-    """
+            </form>
+            """
 
 
 @post("/new_restaurant")

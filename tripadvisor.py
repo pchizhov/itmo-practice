@@ -25,25 +25,27 @@ def extract_reviews_data(parser):
     return texts
 
 
+def process_page(web_driver, page):
+    web_driver.get(page)
+    click_more(web_driver)
+    print("Collecting data from page: {}\n".format(page))
+    soup = BeautifulSoup(web_driver.page_source, "html.parser")
+    return extract_reviews_data(soup)
+
+
 def get_reviews(url):
     """ Collect reviews from a given tripadvisor restaurant page """
     # open the browser
     driver = webdriver.Safari()
-    driver.get(url)
-
-    # get reviews pages' urls
-    pages = [url]
-    page_nums = driver.find_elements_by_class_name("pageNumbers")
-    if page_nums:
-        pages = [a.get_attribute("href") for a in page_nums[0].find_elements_by_tag_name("a")]
 
     # get reviews from pages
     reviews_list = []
-    for link in pages:
-        driver.get(link)
-        click_more(driver)
-        print("Collecting data from page: {}\n".format(link))
-        soup = BeautifulSoup(driver.page_source, "html.parser")
-        reviews_list.extend(extract_reviews_data(soup))
+    while True:
+        reviews_list.extend(process_page(driver, url))
+        next_page = driver.find_elements_by_class_name("nav next taLnk ui_button primary")
+        if next_page:
+            url = next_page[0]
+        else:
+            break
 
     return reviews_list
