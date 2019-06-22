@@ -1,6 +1,7 @@
 import time
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from pprint import pprint as pp
 
 
 def remove_ns(string):
@@ -11,13 +12,6 @@ def remove_ns(string):
     return new_string
 
 
-def click_more(web_driver):
-    more_spans = web_driver.find_element_by_class_name("taLnk.ulBlueLinks")
-    if more_spans:
-        more_spans.click()
-        time.sleep(1)
-
-
 def extract_reviews_data(parser):
     for div in parser.findAll("div", {"class": "mgrRspnInline"}):
         div.decompose()  # remove managers' responses
@@ -25,10 +19,15 @@ def extract_reviews_data(parser):
     return texts
 
 
-def process_page(web_driver, page):
-    web_driver.get(page)
+def click_more(web_driver):
+    more_spans = web_driver.find_element_by_class_name("taLnk.ulBlueLinks")
+    if more_spans:
+        more_spans.click()
+        time.sleep(1)
+
+
+def process_page(web_driver):
     click_more(web_driver)
-    print("Collecting data from page: {}\n".format(page))
     soup = BeautifulSoup(web_driver.page_source, "html.parser")
     return extract_reviews_data(soup)
 
@@ -41,10 +40,14 @@ def get_reviews(url):
     # get reviews from pages
     reviews_list = []
     while True:
-        reviews_list.extend(process_page(driver, url))
-        next_page = driver.find_elements_by_class_name("nav next taLnk ui_button primary")
+        driver.get(url)
+        print("Collecting data from page: {}\n".format(url))
+        reviews_list.extend(process_page(driver))
+        driver.get(url)
+        next_page = driver.find_elements_by_class_name("nav.next.taLnk.ui_button.primary")
+        time.sleep(1)
         if next_page:
-            url = next_page[0]
+            url = next_page[0].get_attribute("href")
         else:
             break
 
