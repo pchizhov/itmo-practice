@@ -8,8 +8,9 @@ import config
 
 def fill(review, food=0, service=0, ambiance=0, price=0, location=0, marked=0):
     s = session()
-    row = s.query(Review).filter(Review.text == review).one()
-    if row:
+    rows = s.query(Review).filter(Review.text == review).all()
+    if rows:
+        row = rows[0]
         row.food = food
         row.service = service
         row.ambiance = ambiance
