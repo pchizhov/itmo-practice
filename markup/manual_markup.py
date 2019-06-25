@@ -3,7 +3,6 @@ from bottle import (
 )
 
 from markup.tripadvisor import get_reviews
-from train.reviews_loader import load_reviews
 from classifier import classify
 from db import Review, session, fill
 
@@ -15,7 +14,6 @@ def start():
 
 @route("/reviews")
 def reviews_list():
-    load_reviews()
     rows = s.query(Review).filter(Review.marked == 0).all()
     return template("markup/reviews_template", rows=rows)
 

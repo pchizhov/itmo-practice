@@ -6,7 +6,6 @@ from sklearn.metrics import f1_score
 from sklearn.model_selection import train_test_split
 
 import config
-from train.reviews_loader import load_reviews
 from train.create_csv import wrap_in_csv
 
 
@@ -27,7 +26,6 @@ def save_model(model, file_path):
 
 
 def train_model():
-    load_reviews()
     wrap_in_csv()
     df = pd.read_csv(config.CSV_PATH)
     columns = df.columns

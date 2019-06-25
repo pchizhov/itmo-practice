@@ -1,15 +1,13 @@
 import time
+import re
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from pprint import pprint as pp
 
 
 def remove_ns(string):
-    new_string = ""
-    for symbol in string:
-        if symbol != "\n":
-            new_string += symbol
-    return new_string
+    re.sub("\n", " ", string)
+    return string
 
 
 def extract_reviews_data(parser):
@@ -41,7 +39,7 @@ def get_reviews(url):
 
     # get reviews from pages
     reviews_list = []
-    for _ in range(10):
+    for _ in range(5):
         driver.get(url)
         print("Collecting data from page: {}\n".format(url))
         reviews_list.extend(process_page(driver))

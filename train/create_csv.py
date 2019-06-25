@@ -6,6 +6,7 @@ import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 
 import config
+from db import load_reviews
 
 
 alphabet = set(list("abcdefghijklmnopqrstuvwxyz"))
@@ -53,9 +54,6 @@ def mark_labels(reviews):
 
 
 def wrap_in_csv():
-    with open(config.LABELED_REVIEWS_PATH, "r") as rev_file:
-        revs = np.array(json.load(rev_file))
+    revs = np.array(load_reviews(labeled=True))
     df = mark_labels(revs)
     df.to_csv(config.CSV_PATH, index=False)
-
-

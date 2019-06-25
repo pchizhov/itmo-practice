@@ -4,7 +4,7 @@ import pickle
 from sklearn.feature_extraction.text import CountVectorizer
 
 import config
-from db import fill
+from db import fill, load_reviews
 from train.create_csv import get_clean_text
 from train.train_model import train_model
 
@@ -27,7 +27,7 @@ def get_categories(model, categories, x_data, row_data):
         indices = np.where(p)
         clear = True
         for e in proba[i]:
-            if 0.100 < e < 0.900:
+            if 0.050 < e < 0.800:
                 clear = False
                 break
         cats = [0, 0, 0, 0, 0]
@@ -41,18 +41,16 @@ def get_categories(model, categories, x_data, row_data):
 
 
 def classify():
-    # train_model()
+    train_model()
     model_path = config.MODEL_PATH
     categories = np.array(config.CATEGORY_WORDS)
     vocabulary_path = config.VOCABULARY_PATH
-    reviews_texts_path = config.UNLABELED_REVIEWS_PATH
 
-    with open(reviews_texts_path, 'r') as rt_f:
-        reviews_text = [r["text"] for r in json.load(rt_f)]
+    reviews_texts = [r["text"] for r in load_reviews(labeled=False)]
     with open(vocabulary_path, 'r') as v_f:
         vocabulary = np.array(json.load(v_f))
     model = load_model(model_path)
 
-    clean_reviews = get_clean_text(reviews_text)
+    clean_reviews = get_clean_text(reviews_texts)
     x_data = prepare_data(clean_reviews, vocabulary)
-    get_categories(model, categories, x_data, reviews_text)
+    get_categories(model, categories, x_data, reviews_texts)
