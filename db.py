@@ -3,23 +3,33 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+import config
 
-def fill(reviews):
+
+def fill(review, food=0, service=0, ambiance=0, price=0, location=0, marked=0):
     s = session()
-    for r in reviews:
-        review = Review(text=r,
-                        food=0,
-                        service=0,
-                        ambiance=0,
-                        price=0,
-                        location=0,
-                        marked=0)
+    row = s.query(Review).filter(Review.text == review).one()
+    if row:
+        row.food = food
+        row.service = service
+        row.ambiance = ambiance
+        row.price = price
+        row.location = location
+        row.marked = marked
+    else:
+        review = Review(text=review,
+                        food=food,
+                        service=service,
+                        ambiance=ambiance,
+                        price=price,
+                        location=location,
+                        marked=marked)
         s.add(review)
     s.commit()
 
 
 Base = declarative_base()
-engine = create_engine("sqlite:///review.db")
+engine = create_engine("sqlite:///" + config.DB_PATH)
 session = sessionmaker(bind=engine)
 
 

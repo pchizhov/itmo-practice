@@ -3,6 +3,7 @@ from bottle import (
 )
 
 from markup.tripadvisor import get_reviews
+from classifier import classify
 from db import Review, session, fill
 
 
@@ -14,7 +15,7 @@ def start():
 @route("/reviews")
 def reviews_list():
     rows = s.query(Review).filter(Review.marked == 0).all()
-    return template("reviews_template", rows=rows)
+    return template("markup/reviews_template", rows=rows)
 
 
 @route("/add_cat/")
@@ -62,7 +63,14 @@ def new_restaurant():
 @post("/new_restaurant")
 def collect():
     url = request.forms.get("url")
-    fill(get_reviews(url))
+    for r in get_reviews(url):
+        fill(r)
+    redirect("/reviews")
+
+
+@route("/predict")
+def predict():
+    classify()
     redirect("/reviews")
 
 
