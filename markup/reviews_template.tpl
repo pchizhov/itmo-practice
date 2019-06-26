@@ -36,6 +36,7 @@
                     <th colspan="7">
                         <a href="/new_restaurant" class="ui right floated small primary button">Wanna more reviews!</a>
                         <a href="/predict" class="ui right floated small primary button">Predict labels!</a>
+                        <a href="/train" class="ui right floated small primary button">Train model!</a>
                     </th>
                 </tr>
             </tfoot>

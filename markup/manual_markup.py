@@ -3,6 +3,7 @@ from bottle import (
 )
 
 from markup.tripadvisor import get_reviews
+from train.train_model import train_model
 from classifier import classify
 from db import Review, session, fill
 
@@ -14,12 +15,14 @@ def start():
 
 @route("/reviews")
 def reviews_list():
+    s = session()
     rows = s.query(Review).filter(Review.marked == 0).all()
     return template("markup/reviews_template", rows=rows)
 
 
 @route("/add_cat/")
 def add_cat():
+    s = session()
     cat = str(request.query.cat)
     row_id = request.query.id
     row = s.query(Review).filter(Review.id == row_id).one()
@@ -44,6 +47,7 @@ def add_cat():
 
 @route("/update/")
 def update():
+    s = session()
     row_id = request.query.id
     row = s.query(Review).filter(Review.id == row_id).one()
     row.marked = 1
@@ -53,10 +57,18 @@ def update():
 
 @get("/new_restaurant")
 def new_restaurant():
-    return """<form action="/new_restaurant" method="post">
+    return """
+    <head>
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.12/semantic.min.css"></link>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.12/semantic.min.js"></script>
+    </head>
+    <div class="ui container" style="padding-top: 10px;">
+    <form action="/new_restaurant" method="post">
             Insert the TripAdvisor restaurant url: <input name="url" type="text" />
-            <input value="Go!" type="submit" />
+            <input class="ui bottom floated small primary button" value="Go!" type="submit" />
             </form>
+            </div>
             """
 
 
@@ -74,6 +86,12 @@ def predict():
     redirect("/reviews")
 
 
-if __name__ == "__main__":
-    s = session()
+@route("/train")
+def train():
+    f1_score = train_model()
+    print("Model successfully trained with score: {}\n".format(f1_score))
+    redirect("/reviews")
+
+
+def load():
     run(host="localhost", port=8080)

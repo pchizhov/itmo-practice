@@ -2,7 +2,6 @@ import time
 import re
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from pprint import pprint as pp
 
 
 def remove_ns(string):

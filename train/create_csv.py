@@ -41,9 +41,8 @@ def mark_labels(reviews):
         for cat, val in reviews[i].items():
             if cat != "text":
                 labels[i][config.CATEGORY_WORDS.index(cat)] = val
-    print(clean_reviews)
-    # toDO TfidfVectorizer()
-    vec = CountVectorizer(binary=True)
+
+    vec = CountVectorizer()
     x = vec.fit_transform(clean_reviews)
     with open(config.VOCABULARY_PATH, 'w') as rr_f:
         json.dump(vec.get_feature_names(), rr_f)
